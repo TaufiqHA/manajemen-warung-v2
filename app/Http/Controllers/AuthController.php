@@ -15,9 +15,12 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        // 2. Cek credential & autentikasi
-        if (Auth::attempt($credentials)) {
-            // 3. Regenerate session id (untuk mencegah celah session fixation)
+        // 2. Tangkap apakah checkbox "remember me" dicentang atau tidak (menghasilkan true/false)
+        $remember = $request->has('remember');
+
+        // 3. Panggil Auth::attempt dengan menyertakan argumen $remember
+        if (Auth::attempt($credentials, $remember)) {
+            // 4. Regenerate session id (untuk mencegah celah session fixation)
             $request->session()->regenerate();
 
             return redirect()->intended('/dashboard');

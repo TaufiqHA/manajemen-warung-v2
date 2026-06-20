@@ -7,7 +7,7 @@ use App\Http\Controllers\DashboardController;
 // Rute Halaman Login (TIDAK BOLEH dikunci oleh check.login)
 Route::get('/', function () {
     return view('login');
-});
+})->middleware('guest');
 
 // Rute autentikasi
 Route::post('/login', [AuthController::class, 'login'])->name('login');

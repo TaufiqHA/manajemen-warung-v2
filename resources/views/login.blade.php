@@ -63,11 +63,22 @@
                 </button>
             </form>
 
-            <!-- Lupa Password (Rata Kiri) -->
-            <div class="mt-6">
-                <a href="#" class="text-sm text-gray-500 hover:text-green-500 font-medium transition-colors">
+            <!-- Checkbox Remember Me & Lupa Password -->
+            <div class="mt-6 flex items-center justify-between">
+                
+                <!-- Checkbox -->
+                <div class="flex items-center">
+                    <input id="remember" name="remember" type="checkbox" class="h-4 w-4 text-[#2D735B] focus:ring-[#2D735B] border-gray-300 rounded cursor-pointer">
+                    <label for="remember" class="ml-2 block text-sm text-gray-600 cursor-pointer">
+                        Remember me
+                    </label>
+                </div>
+
+                <!-- Tautan Forgot Password -->
+                <a href="#" class="text-sm text-gray-500 hover:text-[#2D735B] font-medium transition-colors">
                     Forgot Password
                 </a>
+                
             </div>
         </div>
     </div>
