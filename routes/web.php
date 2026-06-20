@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 
 // Rute Halaman Login (TIDAK BOLEH dikunci oleh check.login)
 Route::get('/', function () {
@@ -15,5 +16,5 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::get('/me', [AuthController::class, 'me'])->middleware('check.login');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('check.login')->name('logout');
 
-// Contoh penerapan perlindungan untuk masuk ke dashboard
-Route::view('/dashboard', 'dashboard')->middleware('check.login');
+// Ganti Route::view('/dashboard', ...) dengan memanggil class DashboardController
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('check.login');
