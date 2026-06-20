@@ -22,13 +22,11 @@
             <!-- Panggil Komponen Headbar -->
             @include('components.headbar')
 
-            <!-- Area Main Content (Bisa diganti-ganti nanti dengan Yield jika ini layout template) -->
+            <!-- Area Main Content -->
             <main class="flex-1 overflow-x-hidden overflow-y-auto px-4 md:px-8 py-4">
                 
-                <!-- Letak dummy content Dashboard (Placeholder) -->
-                <div class="w-full h-full border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center text-gray-400">
-                    Isi widget dashboard & grafik akan ditempatkan di sini...
-                </div>
+                <!-- Di sinilah konten dari masing-masing halaman akan disuntikkan -->
+                @yield('content')
                 
             </main>
 
