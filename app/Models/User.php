@@ -19,9 +19,15 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'warung_id',
         'name',
+        'username',
         'email',
         'password',
+        'phone',
+        'role',
+        'avatar_url',
+        'is_active',
     ];
 
     /**
@@ -44,6 +50,13 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
+    }
+    
+    // (Opsional tapi disarankan) Tambahkan relasi tabel ke Warung
+    public function warung()
+    {
+        return $this->belongsTo(Warung::class);
     }
 }

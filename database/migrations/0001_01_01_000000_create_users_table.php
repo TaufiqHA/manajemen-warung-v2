@@ -13,10 +13,18 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            // Relasi ke tabel warungs (Pastikan migration untuk tabel warungs ada sebelum tabel ini)
+            $table->foreignId('warung_id')->constrained('warungs')->cascadeOnDelete();
+            
             $table->string('name');
+            $table->string('username')->nullable()->unique();
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('phone')->nullable();
+            $table->enum('role', ['OWNER', 'ADMIN_TOKO', 'ADMIN_KANTOR', 'KASIR', 'KARYAWAN'])->default('KASIR');
+            $table->string('avatar_url')->nullable();
+            $table->boolean('is_active')->default(true);
+            
             $table->rememberToken();
             $table->timestamps();
         });
