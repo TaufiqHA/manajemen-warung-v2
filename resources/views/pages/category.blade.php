@@ -5,7 +5,7 @@
     @include('components.successAlert')
     
     <x-page-header title="Daftar Kategori" subtitle="Kelola kategori produk untuk warung Anda">
-        <x-button @click="showModalCreate = true" color="primary" size="lg">
+        <x-button @click="showModalCreate = true" color="primary" size="lg" icon="plus">
             Tambah Kategori
         </x-button>
     </x-page-header>
@@ -38,11 +38,11 @@
                 <x-table.td>{{ $category->order }}</x-table.td>
                 <x-table.td class="text-right">
                     <div class="flex justify-end gap-2">
-                        <x-button @click="showModalEdit = true; editData = { id: {{ $category->id }}, name: '{{ addslashes($category->name) }}', description: '{{ addslashes($category->description) }}', order: {{ $category->order }}, icon: '{{ addslashes($category->icon) }}' }" color="warning" size="sm">Edit</x-button>
+                        <x-button @click="showModalEdit = true; editData = { id: {{ $category->id }}, name: '{{ addslashes($category->name) }}', description: '{{ addslashes($category->description) }}', order: {{ $category->order }}, icon: '{{ addslashes($category->icon) }}' }" color="warning" size="sm" icon="edit">Edit</x-button>
                         <form action="{{ route('categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?');" class="inline">
                             @csrf
                             @method('DELETE')
-                            <x-button type="submit" color="danger" size="sm">Hapus</x-button>
+                            <x-button type="submit" color="danger" size="sm" icon="trash">Hapus</x-button>
                         </form>
                     </div>
                 </x-table.td>

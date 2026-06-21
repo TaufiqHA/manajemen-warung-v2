@@ -3,7 +3,7 @@
 @section('content')
 <div x-data="{ addModalOpen: false, editModalOpen: false, editData: {} }">
     <x-page-header title="Daftar Produk" subtitle="Kelola produk untuk warung Anda">
-        <x-button @click="addModalOpen = true" color="primary" size="lg">
+        <x-button @click="addModalOpen = true" color="primary" size="lg" icon="plus">
             Tambah Produk
         </x-button>
     </x-page-header>
@@ -31,11 +31,11 @@
             <x-table.td>{{ $product->stock }} {{ $product->unit }}</x-table.td>
             <x-table.td class="text-right">
                 <div class="flex justify-end gap-2">
-                    <x-button @click="editData = {{ json_encode($product) }}; editModalOpen = true" color="warning" size="sm">Edit</x-button>
+                    <x-button @click="editData = {{ json_encode($product) }}; editModalOpen = true" color="warning" size="sm" icon="edit">Edit</x-button>
                     <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus produk ini?');" class="inline">
                         @csrf
                         @method('DELETE')
-                        <x-button type="submit" color="danger" size="sm">Hapus</x-button>
+                        <x-button type="submit" color="danger" size="sm" icon="trash">Hapus</x-button>
                     </form>
                 </div>
             </x-table.td>
