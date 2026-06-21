@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CategoryController;
-
+use App\Http\Controllers\ProductController;
 // Rute Halaman Login (TIDAK BOLEH dikunci oleh check.login)
 Route::get('/', function () {
     return view('login');
@@ -21,6 +21,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('check.log
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('check.login');
 Route::resource('categories', CategoryController::class)->middleware('check.login');
 
+// Product Routes
+Route::get('/products', [ProductController::class, 'index'])->name('products.index')->middleware('check.login');
+Route::post('/products', [ProductController::class, 'store'])->name('products.store')->middleware('check.login');
+Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update')->middleware('check.login');
+Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy')->middleware('check.login');
 // Rute Profil User
 Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index')->middleware('check.login');
 Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update')->middleware('check.login');

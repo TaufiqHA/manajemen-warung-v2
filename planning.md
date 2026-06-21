@@ -1,65 +1,108 @@
-# Planning: Fitur Profile User
+# Planning: Fitur Product
 
-Dokumen ini berisi langkah-langkah implementasi fitur Profile User, termasuk melihat data, mengubah profil, dan mengubah password.
+## Deskripsi Tugas
 
-## 🗂️ Daftar File yang Ditambahkan & Diubah
+Implementasi fitur CRUD (Create, Read, Update, Delete) untuk produk. Tugas ini meliputi pembuatan tabel database, model, controller, tampilan (view), konfigurasi routing, serta pembuatan unit test. Instruksi ini disusun agar mudah diikuti langkah demi langkah.
 
-**Ditambahkan:**
-- `resources/views/pages/profile.blade.php`
-- `app/Http/Controllers/ProfileController.php`
-- `tests/Feature/ProfileControllerTest.php`
+## File yang Akan Dibuat/Diubah
 
-**Diubah:**
-- `routes/web.php`
+- 🟢 **`database/migrations/xxxx_xx_xx_xxxxxx_create_products_table.php`** (Baru)
+- 🟢 **`app/Models/Product.php`** (Baru)
+- 🟢 **`app/Http/Controllers/ProductController.php`** (Baru)
+- 🟢 **`resources/views/pages/product.blade.php`** (Baru)
+- 🟡 **`routes/web.php`** (Update)
+- 🟢 **`tests/Feature/ProductTest.php`** (Baru)
 
 ---
 
-## 📝 Langkah-langkah Implementasi
+## Langkah-Langkah Implementasi
 
-### Langkah 1: Membuat Controller
-Jalankan perintah artisan berikut di terminal:
+### 1. Database Migration
+
+Jalankan perintah terminal berikut untuk membuat file migration:
+
 ```bash
-php artisan make:controller ProfileController
+php artisan make:migration create_products_table
 ```
 
-**Instruksi Implementasi `ProfileController.php`:**
-- **`index()`**: Ambil data user yang sedang login via `auth()->user()`, lalu arahkan ke view `pages.profile` dengan membawa data tersebut.
-- **`update(Request $request)`**: 
-  - Validasi input (`name` wajib, `email` wajib dan unique selain user ini).
-  - Update data user di database.
-  - Redirect kembali (`back()`) dengan _flash message_ sukses.
-- **`updatePassword(Request $request)`**:
-  - Validasi input (`current_password`, `new_password`, `new_password_confirmation`).
-  - Cek apakah `current_password` cocok dengan password user saat ini menggunakan `Hash::check`. Jika salah, kembalikan pesan error validasi.
-  - Jika benar, update password user dengan password baru yang sudah di-hash (`Hash::make`).
-  - Redirect kembali dengan _flash message_ sukses.
+> **Perhatian:** JANGAN jalankan `php artisan migrate` setelah file dibuat. Cukup buat struktur tabelnya saja.
 
-### Langkah 2: Mendaftarkan Route
-Buka `routes/web.php` dan tambahkan route berikut di dalam grup middleware `auth`:
+Buka file migration yang baru terbuat di folder `database/migrations/` dan lengkapi method `up()` dengan schema berikut:
+
 ```php
-Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
-Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
-Route::put('/profile/password', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password.update');
+Schema::create('products', function (Blueprint $table) {
+    $table->id(); // id bigint [pk, increment]
+    $table->foreignId('warung_id')->constrained('warungs'); // warung_id bigint
+    $table->foreignId('category_id')->constrained('categories')->nullable(); // category_id bigint [null]
+    $table->string('name'); // name varchar
+    $table->text('description')->nullable(); // description text [null]
+    $table->bigInteger('price'); // price bigint
+    $table->integer('order')->default(0); // order int [default: 0]
+    $table->integer('stock')->default(0); // stock int [default: 0]
+    $table->string('unit')->default('pcs'); // unit varchar [default: 'pcs']
+    $table->string('image_url')->nullable(); // image_url varchar [null]
+    $table->boolean('is_active')->default(true); // is_active boolean [default: true]
+    $table->timestamps(); // created_at, updated_at
+});
 ```
 
-### Langkah 3: Membuat Layout Halaman Profile
-Buat file baru di `resources/views/pages/profile.blade.php`.
+### 2. Model
 
-**Panduan Styling Khusus (Mengacu ke `style-rec.md`):**
-- Layout halaman harus menggunakan struktur wrapper utama dashboard.
-- **Container / Card**: Gunakan warna latar `bg-white` atau `bg-[#f8fcfb]` dengan `rounded-2xl` dan `shadow-sm` untuk membungkus tiap-tiap form (satu card untuk Edit Profile, satu card untuk Ganti Password).
-- **Input Text**: Semua `<input>` harus menggunakan bentuk `rounded-full`, teks `text-gray-800`, dan memiliki efek fokus `focus:ring-2 focus:ring-[#2D735B] transition-colors duration-300`.
-- **Button / Tombol Simpan**: Gunakan warna `bg-[#2D735B]` dengan bentuk `rounded-full` dan teks putih (`text-white`). Berikan efek hover `hover:bg-[#245D49] transition-colors duration-300`.
-- **Typografi**: Gunakan `text-gray-800 font-bold` untuk judul form, dan `text-gray-600` untuk deskripsi/label.
+Jalankan perintah berikut untuk membuat model:
 
-### Langkah 4: Membuat dan Implementasi Test
-Jalankan perintah berikut:
 ```bash
-php artisan make:test ProfileControllerTest
+php artisan make:model Product
 ```
 
-**Instruksi Implementasi `ProfileControllerTest.php`:**
-- **`test_profile_page_is_displayed`**: Buat _dummy user_, jalankan fitur login sebagai user tersebut (`actingAs`), lakukan GET request ke `/profile`, pastikan mengembalikan status `200`.
-- **`test_profile_information_can_be_updated`**: Login sebagai user, lakukan PUT request ke `/profile` dengan membawa data `name` dan `email` baru. Pastikan tidak ada error di session dan data user di database ikut berubah.
-- **`test_password_can_be_updated`**: Login sebagai user, lakukan PUT request ke `/profile/password` dengan membawa data `current_password`, `password` (baru), dan `password_confirmation`. Lakukan pengecekan dengan `Hash::check` untuk memastikan password user di database telah berubah.
-- **`test_correct_password_must_be_provided_to_update_password`**: Pastikan validasi gagal jika `current_password` yang dimasukkan tidak sama dengan password asli user saat ini.
+Buka file `app/Models/Product.php` dan tambahkan properti `$fillable` agar data dapat disimpan. Daftarkan semua kolom tabel (kecuali id dan timestamps) ke dalam `$fillable`.
+
+### 3. Controller
+
+Jalankan perintah berikut untuk membuat controller:
+
+```bash
+php artisan make:controller ProductController
+```
+
+Buka file `app/Http/Controllers/ProductController.php` dan buat 4 fungsi utama:
+
+- `index()`: Ambil seluruh data produk dan kirim (return view) ke `pages.product`.
+- `store(Request $request)`: Lakukan validasi input, simpan produk baru ke database, dan return redirect dengan pesan sukses.
+- `update(Request $request, $id)`: Cari produk berdasarkan ID, lakukan validasi input, update data di database, dan return redirect dengan pesan sukses.
+- `destroy($id)`: Cari produk berdasarkan ID, hapus dari database, dan return redirect dengan pesan sukses.
+
+### 4. Routing
+
+Buka file `routes/web.php` dan daftarkan endpoint untuk `ProductController`. Pastikan rute diletakkan dalam middleware otentikasi (jika sistem warung membutuhkannya):
+
+```php
+use App\Http\Controllers\ProductController;
+
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
+Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+```
+
+### 5. View (Tampilan)
+
+Buat file `product.blade.php` di dalam direktori `resources/views/pages/`.
+
+- Rancang tampilan untuk memuat tabel/daftar produk.
+- Siapkan komponen formulir (bisa berbentuk modal) untuk fungsi Tambah dan Edit produk.
+- **Catatan Penting:** Gunakan `style-rec.md` sebagai referensi tunggal panduan desain (styling guide). Pastikan struktur HTML, CSS class (misal jika memakai Tailwind), atau komponen UI mengikuti standar dari `style-rec.md` agar antarmuka konsisten.
+
+### 6. Unit Testing
+
+Jalankan perintah berikut untuk membuat file testing:
+
+```bash
+php artisan make:test ProductTest
+```
+
+Buka file `tests/Feature/ProductTest.php` dan buat pengujian untuk memverifikasi fungsionalitas dari method Controller. Contohnya:
+
+- Test apakah endpoint index dapat diakses dengan sukses (Status 200).
+- Test apakah produk baru dapat disimpan ke database melalui endpoint store.
+- Test apakah produk dapat diperbarui.
+- Test apakah produk dapat dihapus dari database.

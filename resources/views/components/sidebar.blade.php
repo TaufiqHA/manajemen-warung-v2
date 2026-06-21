@@ -38,6 +38,13 @@
                 <span class="absolute right-4 w-2 h-2 rounded-full bg-white"></span>
                 @endif
             </a>
+            <a href="{{ route('products.index') }}" class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('products.*') ? 'bg-[#245D49] text-white font-medium' : 'text-green-100 hover:bg-[#245D49]' }} relative transition-colors">
+                <svg class="w-5 h-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                Produk
+                @if(request()->routeIs('products.*'))
+                <span class="absolute right-4 w-2 h-2 rounded-full bg-white"></span>
+                @endif
+            </a>
             <a href="#" class="flex items-center px-4 py-3 rounded-lg text-green-100 hover:bg-[#245D49] transition-colors">
                 <svg class="w-5 h-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
                 Messages
