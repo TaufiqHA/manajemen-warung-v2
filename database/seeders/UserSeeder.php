@@ -21,14 +21,14 @@ class UserSeeder extends Seeder
 
         // 2. Generate / Create akun Admin menggunakan updateOrCreate agar tidak terjadi duplikat saat dijalankan berkali-kali
         User::updateOrCreate(
-            ["email" => "admin@pos.com"], // Pencarian berdasarkan email
+            ["email" => "admin@warung.com"], // Pencarian berdasarkan email
             [
                 "warung_id" => $warung->id,
                 "name" => "Admin Warung",
                 "username" => "admin",
                 "password" => bcrypt("password"),
                 "phone" => "081234567890",
-                "role" => "OWNER",
+                "role" => "ADMIN_TOKO",
                 "is_active" => true,
             ],
         );

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('phone')->nullable();
-            $table->enum('role', ['OWNER', 'ADMIN_TOKO', 'ADMIN_KANTOR', 'KASIR', 'KARYAWAN'])->default('KASIR');
+            $table->enum('role', ['OWNER', 'ADMIN_TOKO', 'ADMIN_KANTOR'])->default('ADMIN_TOKO');
             $table->string('avatar_url')->nullable();
             $table->boolean('is_active')->default(true);
             
