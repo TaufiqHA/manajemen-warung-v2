@@ -24,11 +24,19 @@
         
         <!-- Navigation -->
         <nav class="flex flex-col mt-4 space-y-2 px-6">
-            <a href="#" class="flex items-center px-4 py-3 rounded-lg bg-[#245D49] text-white font-medium relative transition-colors">
+            <a href="{{ url('/dashboard') }}" class="flex items-center px-4 py-3 rounded-lg {{ request()->is('dashboard') ? 'bg-[#245D49] text-white font-medium' : 'text-green-100 hover:bg-[#245D49]' }} relative transition-colors">
                 <svg class="w-5 h-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 Dashboard
-                <!-- Active dot indicator -->
+                @if(request()->is('dashboard'))
                 <span class="absolute right-4 w-2 h-2 rounded-full bg-white"></span>
+                @endif
+            </a>
+            <a href="{{ route('categories.index') }}" class="flex items-center px-4 py-3 rounded-lg {{ request()->routeIs('categories.*') ? 'bg-[#245D49] text-white font-medium' : 'text-green-100 hover:bg-[#245D49]' }} relative transition-colors">
+                <svg class="w-5 h-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Kategori
+                @if(request()->routeIs('categories.*'))
+                <span class="absolute right-4 w-2 h-2 rounded-full bg-white"></span>
+                @endif
             </a>
             <a href="#" class="flex items-center px-4 py-3 rounded-lg text-green-100 hover:bg-[#245D49] transition-colors">
                 <svg class="w-5 h-5 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
