@@ -1,77 +1,65 @@
-# Planning: Mengambil dan Menampilkan Inisial Nama di Headbar
+# Planning: Fitur Profile User
 
-## 🎯 Tujuan
+Dokumen ini berisi langkah-langkah implementasi fitur Profile User, termasuk melihat data, mengubah profil, dan mengubah password.
 
-Mengambil data pengguna (`/me`), mengekstrak properti `name`, dan menjadikannya sebagai _Icon Avatar_ (inisial huruf) pada komponen headbar untuk menggantikan teks statis "YN".
+## 🗂️ Daftar File yang Ditambahkan & Diubah
 
-## 📁 File yang Diubah
+**Ditambahkan:**
+- `resources/views/pages/profile.blade.php`
+- `app/Http/Controllers/ProfileController.php`
+- `tests/Feature/ProfileControllerTest.php`
 
-- `resources/views/components/headbar.blade.php`
-
-## 🎨 Panduan Desain (Berdasarkan `style-rec.md`)
-
-Sesuai dengan standar UI proyek Manajemen Warung:
-
-- Tetap gunakan kelas bawaan avatar: `rounded-full` (untuk _pill shape_ / membulat), `bg-white`, dan `text-[#2D735B]` (Primary Dark Green).
-- Jangan ubah ukuran (`w-8 h-8 md:w-10 md:h-10`) atau font (`font-bold`) agar konsisten dengan antarmuka yang ada.
+**Diubah:**
+- `routes/web.php`
 
 ---
 
-## 🛠️ Langkah-langkah Implementasi
+## 📝 Langkah-langkah Implementasi
 
-Berdasarkan arsitektur yang umum di Laravel, pilihlah salah satu dari dua pendekatan di bawah ini yang paling sesuai dengan sistem Anda saat ini.
-
-### Opsi 1: Menggunakan Laravel Auth (Sangat Direkomendasikan jika Non-API)
-
-Jika data "`/me`" merujuk pada pengguna yang sedang aktif (login) di _session_ Laravel, gunakan _helper_ bawaan Laravel secara langsung di file blade. Ini sangat mudah dan cepat diimplementasikan.
-
-**Langkah-langkah:**
-
-1. Buka file `resources/views/components/headbar.blade.php`.
-2. Tepat di atas baris komentar `<!-- Profile Avatar -->`, tambahkan logika PHP untuk mengambil nama _user_ dan memecahnya menjadi inisial (maksimal 2 karakter).
-3. Ganti teks `YN` di dalam tag `<div>` avatar dengan variabel inisial tersebut.
-
-**Contoh Kode (Copy-Paste Ready):**
-
-```html
-<!-- Actions Pill -->
-<div
-    class="flex items-center bg-[#2D735B] rounded-full p-1 md:p-1.5 space-x-2 md:space-x-6 shadow ml-2"
->
-    <!-- Notification -->
-    <button class="pl-3 text-white hover:text-gray-200 transition">
-        <svg
-            class="w-5 h-5 md:w-5 md:h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-        >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-            />
-        </svg>
-    </button>
-
-    <!-- Profile Avatar -->
-    @php // Mengambil nama user yang login, fallback ke 'User Name' jika gagal
-    $name = auth()->check() ? auth()->user()->name : 'User Name'; $words =
-    explode(' ', trim($name)); $initials = ''; // Ambil huruf pertama kata ke-1
-    if (isset($words[0]) && strlen($words[0]) > 0) { $initials .=
-    strtoupper(substr($words[0], 0, 1)); } // Ambil huruf pertama kata ke-2 if
-    (isset($words[1]) && strlen($words[1]) > 0) { $initials .=
-    strtoupper(substr($words[1], 0, 1)); } @endphp
-
-    <div
-        class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center text-[#2D735B] font-bold text-xs md:text-sm mr-0.5 md:mr-1"
-    >
-        {{ $initials ?: 'YN' }}
-    </div>
-</div>
+### Langkah 1: Membuat Controller
+Jalankan perintah artisan berikut di terminal:
+```bash
+php artisan make:controller ProfileController
 ```
 
-## 📝 Rekomendasi Eksekusi
+**Instruksi Implementasi `ProfileController.php`:**
+- **`index()`**: Ambil data user yang sedang login via `auth()->user()`, lalu arahkan ke view `pages.profile` dengan membawa data tersebut.
+- **`update(Request $request)`**: 
+  - Validasi input (`name` wajib, `email` wajib dan unique selain user ini).
+  - Update data user di database.
+  - Redirect kembali (`back()`) dengan _flash message_ sukses.
+- **`updatePassword(Request $request)`**:
+  - Validasi input (`current_password`, `new_password`, `new_password_confirmation`).
+  - Cek apakah `current_password` cocok dengan password user saat ini menggunakan `Hash::check`. Jika salah, kembalikan pesan error validasi.
+  - Jika benar, update password user dengan password baru yang sudah di-hash (`Hash::make`).
+  - Redirect kembali dengan _flash message_ sukses.
 
-Untuk **AI Model** atau **Junior Developer**, disarankan menggunakan **Opsi 1** apabila proyek _Manajemen Warung v2_ ini murni menggunakan arsitektur Blade & Route Laravel biasa (non-API), karena lebih ringan dan tidak bergantung pada _HTTP Request_ di _frontend_.
+### Langkah 2: Mendaftarkan Route
+Buka `routes/web.php` dan tambahkan route berikut di dalam grup middleware `auth`:
+```php
+Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
+Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+Route::put('/profile/password', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password.update');
+```
+
+### Langkah 3: Membuat Layout Halaman Profile
+Buat file baru di `resources/views/pages/profile.blade.php`.
+
+**Panduan Styling Khusus (Mengacu ke `style-rec.md`):**
+- Layout halaman harus menggunakan struktur wrapper utama dashboard.
+- **Container / Card**: Gunakan warna latar `bg-white` atau `bg-[#f8fcfb]` dengan `rounded-2xl` dan `shadow-sm` untuk membungkus tiap-tiap form (satu card untuk Edit Profile, satu card untuk Ganti Password).
+- **Input Text**: Semua `<input>` harus menggunakan bentuk `rounded-full`, teks `text-gray-800`, dan memiliki efek fokus `focus:ring-2 focus:ring-[#2D735B] transition-colors duration-300`.
+- **Button / Tombol Simpan**: Gunakan warna `bg-[#2D735B]` dengan bentuk `rounded-full` dan teks putih (`text-white`). Berikan efek hover `hover:bg-[#245D49] transition-colors duration-300`.
+- **Typografi**: Gunakan `text-gray-800 font-bold` untuk judul form, dan `text-gray-600` untuk deskripsi/label.
+
+### Langkah 4: Membuat dan Implementasi Test
+Jalankan perintah berikut:
+```bash
+php artisan make:test ProfileControllerTest
+```
+
+**Instruksi Implementasi `ProfileControllerTest.php`:**
+- **`test_profile_page_is_displayed`**: Buat _dummy user_, jalankan fitur login sebagai user tersebut (`actingAs`), lakukan GET request ke `/profile`, pastikan mengembalikan status `200`.
+- **`test_profile_information_can_be_updated`**: Login sebagai user, lakukan PUT request ke `/profile` dengan membawa data `name` dan `email` baru. Pastikan tidak ada error di session dan data user di database ikut berubah.
+- **`test_password_can_be_updated`**: Login sebagai user, lakukan PUT request ke `/profile/password` dengan membawa data `current_password`, `password` (baru), dan `password_confirmation`. Lakukan pengecekan dengan `Hash::check` untuk memastikan password user di database telah berubah.
+- **`test_correct_password_must_be_provided_to_update_password`**: Pastikan validasi gagal jika `current_password` yang dimasukkan tidak sama dengan password asli user saat ini.

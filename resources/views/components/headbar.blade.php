@@ -44,8 +44,8 @@
             }
         @endphp
 
-        <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white flex items-center justify-center text-[#2D735B] font-bold text-xs md:text-sm mr-0.5 md:mr-1">
+        <a href="{{ route('profile.index') }}" class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center text-[#2D735B] font-bold text-xs md:text-sm mr-0.5 md:mr-1 transition-colors duration-300">
             {{ $initials ?: 'YN' }}
-        </div>
+        </a>
     </div>
 </header>

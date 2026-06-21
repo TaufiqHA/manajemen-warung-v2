@@ -20,3 +20,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('check.log
 // Ganti Route::view('/dashboard', ...) dengan memanggil class DashboardController
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('check.login');
 Route::resource('categories', CategoryController::class)->middleware('check.login');
+
+// Rute Profil User
+Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index')->middleware('check.login');
+Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update')->middleware('check.login');
+Route::put('/profile/password', [App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password.update')->middleware('check.login');
