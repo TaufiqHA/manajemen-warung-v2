@@ -3,7 +3,7 @@
 @section('content')
 <div x-data="{ showModalCreate: false, showModalEdit: false, editData: {} }">
     @if(session('success'))
-        <div class="mb-4 p-4 rounded-2xl bg-green-100 text-green-700 border border-green-200 shadow-sm flex items-center gap-3">
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" x-transition.duration.500ms class="mb-4 p-4 rounded-2xl bg-green-100 text-green-700 border border-green-200 shadow-sm flex items-center gap-3">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
