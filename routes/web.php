@@ -27,6 +27,9 @@ Route::post('/products', [ProductController::class, 'store'])->name('products.st
 Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update')->middleware('check.login');
 Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy')->middleware('check.login');
 
+// Route Transactions
+Route::resource('transactions', App\Http\Controllers\TransactionController::class)->middleware('check.login');
+
 // Rute Profil User
 Route::get('/profile', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index')->middleware('check.login');
 Route::put('/profile', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update')->middleware('check.login');
