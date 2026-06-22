@@ -1,4 +1,4 @@
-@extends('layout.layout')
+@extends(auth()->user()->role === 'OWNER' ? 'layout.owner' : 'layout.layout')
 
 @section('content')
 <div class="w-full max-w-4xl space-y-6">

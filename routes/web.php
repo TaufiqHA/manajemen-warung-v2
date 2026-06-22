@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\OwnerController;
 use Illuminate\Support\Facades\Route;
 // Rute Halaman Login (TIDAK BOLEH dikunci oleh check.login)
 Route::get('/', function () {
@@ -36,3 +37,8 @@ Route::resource('transactions', TransactionController::class)->middleware('check
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index')->middleware('check.login');
 Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update')->middleware('check.login');
 Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update')->middleware('check.login');
+
+// Route untuk Owner
+Route::get('/owner/dashboard', [OwnerController::class, 'index'])
+    ->name('owner.dashboard')
+    ->middleware('check.login');

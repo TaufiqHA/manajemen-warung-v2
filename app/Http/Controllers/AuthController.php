@@ -23,6 +23,13 @@ class AuthController extends Controller
             // 4. Regenerate session id (untuk mencegah celah session fixation)
             $request->session()->regenerate();
 
+            // Cek role user untuk menentukan halaman redirect default
+            $user = Auth::user();
+            if ($user->role === 'OWNER') {
+                return redirect()->intended('/owner/dashboard');
+            }
+
+            // Default fallback untuk ADMIN (ADMIN_TOKO, ADMIN_KANTOR, dll)
             return redirect()->intended('/dashboard');
         }
 

@@ -1,92 +1,121 @@
-# Transaction Detail Feature Implementation Plan
+# Planning Pembuatan Dashboard Owner & OwnerController
 
-Dokumen ini berisi panduan langkah demi langkah untuk mengimplementasikan fitur Halaman Detail Transaksi. Panduan ini dirancang agar mudah diimplementasikan oleh Junior Developer atau AI assistant secara terstruktur.
+Dokumen ini berisi langkah-langkah implementasi untuk membuat halaman *Dashboard* khusus *Owner*, serta pembuatan *Controller* yang akan menangani proses *backend*-nya. Dokumen ini dirancang agar mudah diikuti oleh Junior Developer atau AI Model.
 
-**PENTING (TAMPILAN UI/UX)**:
-- Untuk semua pembuatan tampilan (layout) khususnya pada halaman Detail Transaksi yang baru, **WAJIB** mengacu pada pedoman di file `style-rec.md` agar desain visual tetap konsisten.
-- Gunakan komponen-komponen UI yang sudah tersedia di folder `resources/views/components` (seperti `<x-button>`, `<x-page-header>`, `<x-table>`, dll) daripada membuat elemen HTML mentah.
+**Penting:** Panduan styling untuk setiap perubahan tampilan wajib merujuk pada `style-rec.md` agar konsisten. Selalu maksimalkan penggunaan komponen yang sudah ada di folder `components`.
 
-## Daftar File yang Akan Berubah/Dibuat
+## 📁 Daftar File yang Terlibat
+**File yang akan ditambahkan:**
+1. `app/Http/Controllers/OwnerController.php` (Otomatis dibuat via artisan command)
+2. `resources/views/owner/dashboard.blade.php`
 
-**Dibuat:**
-1. `resources/views/pages/transactionDetail.blade.php` (Halaman View untuk menampilkan rincian dari transaksi)
-
-**Diubah:**
-1. `resources/views/pages/transaction.blade.php` (Tabel utama, untuk menambahkan tombol "Detail")
-2. `app/Http/Controllers/TransactionController.php` (Menambahkan logika pada method `show` untuk merender view)
+**File yang akan diubah:**
+1. `routes/web.php` (Menambahkan route untuk halaman dashboard owner)
 
 ---
 
-## Langkah 1: Implementasi Method Show pada Controller
+## 🛠️ Langkah-Langkah Implementasi
 
-**Edit File:** `app/Http/Controllers/TransactionController.php`
+### Langkah 1: Membuat OwnerController via Artisan
+**Tujuan:** Membuat controller untuk menangani logika halaman dan fitur khusus Owner.
 
 **Instruksi:**
-1. Karena `routes/web.php` sudah menggunakan `Route::resource('transactions', ...)` secara otomatis, rute `transactions.show` sudah aktif. Kita hanya perlu mengimplementasi method `show`.
-2. Buat atau cari method `show($id)`.
-3. Gunakan Eloquent untuk mengambil data transaksi beserta relasi itemnya: `Transaction::with('items')->findOrFail($id);`
-4. Lakukan *return view* ke `pages.transactionDetail` dan bawa variabel transaksi tersebut.
+1. Buka terminal di *root directory* proyek.
+2. Jalankan perintah artisan berikut untuk membuat *controller*:
+   ```bash
+   php artisan make:controller OwnerController
+   ```
+3. Buka file hasil *generate* yang berada di `app/Http/Controllers/OwnerController.php`.
+4. Buat fungsi `index` yang akan mengembalikan (*return*) file *view* halaman dashboard owner.
 
-**Contoh Logic:**
+*Contoh Kode di `OwnerController.php`:*
 ```php
-public function show($id)
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class OwnerController extends Controller
 {
-    $transaction = Transaction::with('items')->findOrFail($id);
-    
-    return view('pages.transactionDetail', compact('transaction'));
+    public function index()
+    {
+        // Tempat mengambil data statistik di masa mendatang
+        return view('owner.dashboard');
+    }
 }
 ```
 
-## Langkah 2: Pembuatan Halaman Detail Transaksi (Frontend)
+---
 
-**Buat File Baru:** `resources/views/pages/transactionDetail.blade.php`
+### Langkah 2: Membuat File Tampilan `dashboard.blade.php`
+**File:** `resources/views/owner/dashboard.blade.php`
 
-**Instruksi Khusus untuk View:**
-1. Rujuk file `style-rec.md` agar gaya desain seragam. Pastikan halaman di-*wrap* dengan `@extends('layout.layout')` dan `@section('content')`.
-2. Gunakan komponen `<x-page-header>` dengan judul misalnya "Detail Transaksi: [KODE_TRANSAKSI]". Di dalamnya, sediakan tombol "Kembali" yang memanggil `route('transactions.index')`.
-3. Buat kerangka desain yang rapi (bisa dua kolom Grid atau model Struk/Invoice). Tampilkan informasi utama Master:
-   - Kode Transaksi
-   - Nama Pelanggan
-   - Tanggal
-   - Status, Metode Pembayaran
-   - Catatan
-4. Gunakan komponen `<x-table>` untuk merender list/daftar barang (`$transaction->items`) beserta:
-   - Nama Produk
-   - Harga Satuan
-   - Kuantitas (Qty)
-   - Subtotal
-5. Di bagian bawah tabel, tampilkan rangkuman totalnya:
-   - Total Item
-   - Diskon
-   - Pajak
-   - **Grand Total**
-   - Jumlah Bayar (Nominal)
-   - Kembalian
-
-## Langkah 3: Modifikasi Tabel Utama Transaksi
-
-**Edit File:** `resources/views/pages/transaction.blade.php`
+**Tujuan:** Menyusun halaman tampilan dasbor Owner, yang berjalan di dalam *layout* `owner.blade.php` yang sudah dibuat sebelumnya.
 
 **Instruksi:**
-1. Buka file tabel indeks transaksi.
-2. Cari bagian kolom tabel "Aksi" (di dalam pengulangan `@forelse`).
-3. Tambahkan tombol baru ("Detail") tepat di sebelah tombol "Hapus" yang sudah ada. Tombol ini harus berbentuk *link* atau elemen yang mengarah ke endpoint `transactions.show`.
+1. Buat folder baru bernama `owner` di dalam direktori `resources/views/` (jika belum ada).
+2. Buat file bernama `dashboard.blade.php` di dalam folder tersebut.
+3. *Extend* halaman ke kerangka layout Owner (`layout.owner`).
+4. Isi blok `@section('content')` dengan struktur antarmuka (*UI*) sederhana yang mengikuti panduan dari `style-rec.md`.
 
-**Contoh Implementasi:**
-```html
-<div class="flex justify-end gap-2">
-    <!-- Tombol Detail -->
-    <a href="{{ route('transactions.show', $trx->id) }}">
-        <x-button type="button" color="secondary" size="sm" icon="eye">Detail</x-button>
-    </a>
-    
-    <!-- Tombol Hapus (Sudah ada) -->
-    <form action="..." ...>
-       ...
-    </form>
-</div>
+*Contoh Struktur `dashboard.blade.php`:*
+```blade
+@extends('layout.owner')
+
+@section('content')
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Dashboard Owner</h1>
+        <p class="text-gray-600 mt-1">Ringkasan aktivitas dan pendapatan warung.</p>
+    </div>
+
+    <!-- Contoh Grid untuk Card Statistik sesuai style-rec.md -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+            <h3 class="text-gray-500 font-medium text-sm">Total Pendapatan (Bulan ini)</h3>
+            <p class="text-3xl font-bold text-[#2D735B] mt-2">Rp 0</p>
+        </div>
+        
+        <!-- Card 2 -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+            <h3 class="text-gray-500 font-medium text-sm">Total Transaksi</h3>
+            <p class="text-3xl font-bold text-[#2D735B] mt-2">0</p>
+        </div>
+        
+        <!-- Card 3 -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm">
+            <h3 class="text-gray-500 font-medium text-sm">Produk Terjual</h3>
+            <p class="text-3xl font-bold text-[#2D735B] mt-2">0</p>
+        </div>
+    </div>
+@endsection
 ```
 
 ---
-**Catatan Implementasi Tambahan:** 
-Pastikan ukuran tombol seragam dan warna merepresentasikan peruntukannya (contoh: *secondary* atau *info* untuk detail). Lakukan _commit_ setelah selesai merangkai komponen.
+
+### Langkah 3: Mendaftarkan Route di `web.php`
+**File:** `routes/web.php`
+
+**Tujuan:** Mengarahkan *URL* dari halaman web ke fungsi `index` di `OwnerController`.
+
+**Instruksi:**
+1. Buka file `routes/web.php`.
+2. *Import* class `OwnerController` di bagian paling atas.
+3. Tambahkan route `GET` yang mengarah ke metode `index` dari `OwnerController`. Beri nama rutenya (`name`) dan pastikan untuk membungkus rute ini dalam _middleware auth_.
+
+*Contoh Penambahan di `web.php`:*
+```php
+use App\Http\Controllers\OwnerController;
+
+// Route untuk Owner
+Route::get('/owner/dashboard', [OwnerController::class, 'index'])
+    ->name('owner.dashboard')
+    ->middleware('auth');
+```
+
+## 📝 Catatan Tambahan (Sesuai `style-rec.md`)
+- Gunakan pembungkus data / kotak panel (*Card*) dengan *class* `bg-white p-6 rounded-2xl shadow-sm`.
+- Gunakan warna hijau kebanggaan aplikasi (`text-[#2D735B]`) untuk memberi *highlight* pada informasi atau angka yang penting.
+- Hirarki teks: `text-gray-800` (Judul besar), `text-gray-600` (Paragraf/Sub-teks), dan `text-gray-500` (Teks hint/label kecil).
+- Tolong jangan menggunakan variasi warna baru yang acak (misal, tidak boleh asal pakai `text-blue-500`) tanpa konfirmasi, agar desain tetap terkesan mewah dan menyatu.

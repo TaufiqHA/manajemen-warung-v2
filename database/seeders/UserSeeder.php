@@ -32,5 +32,19 @@ class UserSeeder extends Seeder
                 "is_active" => true,
             ],
         );
+
+        // 3. Generate / Create akun Owner
+        User::updateOrCreate(
+            ["email" => "owner@warung.com"],
+            [
+                "warung_id" => $warung->id,
+                "name" => "Owner Warung",
+                "username" => "owner",
+                "password" => bcrypt("password"),
+                "phone" => "081234567891",
+                "role" => "OWNER",
+                "is_active" => true,
+            ],
+        );
     }
 }
