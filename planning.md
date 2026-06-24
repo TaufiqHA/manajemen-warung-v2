@@ -1,121 +1,44 @@
-# Planning Pembuatan Dashboard Owner & OwnerController
+# Perencanaan Implementasi Global Search (Headbar)
 
-Dokumen ini berisi langkah-langkah implementasi untuk membuat halaman *Dashboard* khusus *Owner*, serta pembuatan *Controller* yang akan menangani proses *backend*-nya. Dokumen ini dirancang agar mudah diikuti oleh Junior Developer atau AI Model.
+## 🎯 Tujuan
+Membuat fitur pencarian pada komponen `headbar.blade.php` berfungsi secara dinamis dan kontekstual. Pencarian akan selalu menyesuaikan dengan halaman/modul yang sedang dibuka oleh pengguna (misalnya: saat berada di halaman Transaksi, akan mencari transaksi; saat di halaman Produk, akan mencari produk).
 
-**Penting:** Panduan styling untuk setiap perubahan tampilan wajib merujuk pada `style-rec.md` agar konsisten. Selalu maksimalkan penggunaan komponen yang sudah ada di folder `components`.
+## 📝 1. Modifikasi Frontend (Komponen Headbar)
+- **File Target**: `resources/views/components/headbar.blade.php`
+- **Tindakan**:
+  - Bungkus tag `<input>` pencarian yang sudah ada dengan tag `<form>`.
+  - Atur **Method** form menjadi `GET`.
+  - Atur **Action** form menjadi `{{ url()->current() }}` agar parameter dikirimkan ke halaman yang saat ini sedang aktif.
+  - Tambahkan atribut `name="search"` pada tag `<input>`.
+  - Tambahkan nilai default `value="{{ request('search') }}"` pada input agar keyword tidak hilang (tetap bertahan di kotak pencarian) setelah pengguna menekan enter/mencari.
 
-## 📁 Daftar File yang Terlibat
-**File yang akan ditambahkan:**
-1. `app/Http/Controllers/OwnerController.php` (Otomatis dibuat via artisan command)
-2. `resources/views/owner/dashboard.blade.php`
+*(Catatan: Langkah ini sudah dikerjakan dan sekarang headbar siap digunakan di seluruh halaman).*
 
-**File yang akan diubah:**
-1. `routes/web.php` (Menambahkan route untuk halaman dashboard owner)
+## ⚙️ 2. Penyesuaian Backend (Controller)
+Untuk setiap halaman yang membutuhkan dukungan fitur *search*, fungsi penampil datanya (biasanya method `index`) perlu dimodifikasi. 
+- **Tindakan**:
+  - Tangkap request pencarian dengan logika kondisi `if ($request->filled('search'))`.
+  - Terapkan filter pencarian pada *Query Builder* / *Eloquent* menggunakan operator `like` (berdasarkan kolom tabel yang ingin dicari, seperti nama atau kode).
+  - Jika menggunakan *pagination*, pastikan parameter pencarian disematkan ke *link pagination* menggunakan `appends(['search' => $request->search])`.
 
----
+### Contoh Skema pada `TransactionController` (Sudah Selesai)
+- **Kolom Target Pencarian**: `transaction_code` atau `customer_name`.
+- **Implementasi**: 
+  ```php
+  if ($request->filled('search')) {
+      $search = $request->search;
+      $query->where(function($q) use ($search) {
+          $q->where('transaction_code', 'like', "%{$search}%")
+            ->orWhere('customer_name', 'like', "%{$search}%");
+      });
+  }
+  ```
 
-## 🛠️ Langkah-Langkah Implementasi
-
-### Langkah 1: Membuat OwnerController via Artisan
-**Tujuan:** Membuat controller untuk menangani logika halaman dan fitur khusus Owner.
-
-**Instruksi:**
-1. Buka terminal di *root directory* proyek.
-2. Jalankan perintah artisan berikut untuk membuat *controller*:
-   ```bash
-   php artisan make:controller OwnerController
-   ```
-3. Buka file hasil *generate* yang berada di `app/Http/Controllers/OwnerController.php`.
-4. Buat fungsi `index` yang akan mengembalikan (*return*) file *view* halaman dashboard owner.
-
-*Contoh Kode di `OwnerController.php`:*
-```php
-<?php
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-
-class OwnerController extends Controller
-{
-    public function index()
-    {
-        // Tempat mengambil data statistik di masa mendatang
-        return view('owner.dashboard');
-    }
-}
-```
-
----
-
-### Langkah 2: Membuat File Tampilan `dashboard.blade.php`
-**File:** `resources/views/owner/dashboard.blade.php`
-
-**Tujuan:** Menyusun halaman tampilan dasbor Owner, yang berjalan di dalam *layout* `owner.blade.php` yang sudah dibuat sebelumnya.
-
-**Instruksi:**
-1. Buat folder baru bernama `owner` di dalam direktori `resources/views/` (jika belum ada).
-2. Buat file bernama `dashboard.blade.php` di dalam folder tersebut.
-3. *Extend* halaman ke kerangka layout Owner (`layout.owner`).
-4. Isi blok `@section('content')` dengan struktur antarmuka (*UI*) sederhana yang mengikuti panduan dari `style-rec.md`.
-
-*Contoh Struktur `dashboard.blade.php`:*
-```blade
-@extends('layout.owner')
-
-@section('content')
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Dashboard Owner</h1>
-        <p class="text-gray-600 mt-1">Ringkasan aktivitas dan pendapatan warung.</p>
-    </div>
-
-    <!-- Contoh Grid untuk Card Statistik sesuai style-rec.md -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Card 1 -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm">
-            <h3 class="text-gray-500 font-medium text-sm">Total Pendapatan (Bulan ini)</h3>
-            <p class="text-3xl font-bold text-[#2D735B] mt-2">Rp 0</p>
-        </div>
-        
-        <!-- Card 2 -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm">
-            <h3 class="text-gray-500 font-medium text-sm">Total Transaksi</h3>
-            <p class="text-3xl font-bold text-[#2D735B] mt-2">0</p>
-        </div>
-        
-        <!-- Card 3 -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm">
-            <h3 class="text-gray-500 font-medium text-sm">Produk Terjual</h3>
-            <p class="text-3xl font-bold text-[#2D735B] mt-2">0</p>
-        </div>
-    </div>
-@endsection
-```
-
----
-
-### Langkah 3: Mendaftarkan Route di `web.php`
-**File:** `routes/web.php`
-
-**Tujuan:** Mengarahkan *URL* dari halaman web ke fungsi `index` di `OwnerController`.
-
-**Instruksi:**
-1. Buka file `routes/web.php`.
-2. *Import* class `OwnerController` di bagian paling atas.
-3. Tambahkan route `GET` yang mengarah ke metode `index` dari `OwnerController`. Beri nama rutenya (`name`) dan pastikan untuk membungkus rute ini dalam _middleware auth_.
-
-*Contoh Penambahan di `web.php`:*
-```php
-use App\Http\Controllers\OwnerController;
-
-// Route untuk Owner
-Route::get('/owner/dashboard', [OwnerController::class, 'index'])
-    ->name('owner.dashboard')
-    ->middleware('auth');
-```
-
-## 📝 Catatan Tambahan (Sesuai `style-rec.md`)
-- Gunakan pembungkus data / kotak panel (*Card*) dengan *class* `bg-white p-6 rounded-2xl shadow-sm`.
-- Gunakan warna hijau kebanggaan aplikasi (`text-[#2D735B]`) untuk memberi *highlight* pada informasi atau angka yang penting.
-- Hirarki teks: `text-gray-800` (Judul besar), `text-gray-600` (Paragraf/Sub-teks), dan `text-gray-500` (Teks hint/label kecil).
-- Tolong jangan menggunakan variasi warna baru yang acak (misal, tidak boleh asal pakai `text-blue-500`) tanpa konfirmasi, agar desain tetap terkesan mewah dan menyatu.
+## 🚀 3. Panduan untuk Halaman Lainnya (Next Steps)
+Jika nantinya akan mengaktifkan *search* di modul lain (misalnya halaman **Produk** atau **Kategori**):
+1. Buka file Controller yang bersangkutan (contoh: `ProductController.php`).
+2. Cari method `index` yang merender tabel data.
+3. Ubah query pengambilan data menjadi sebuah *instance Query Builder* (misal: `$query = Product::query();`).
+4. Terapkan logika pengecekan `if ($request->filled('search')) { ... }` yang memfilter nama produk atau SKU.
+5. Jalankan eksekusi query (contoh: `$products = $query->paginate(10)->appends(['search' => $request->search]);`).
+6. Tidak perlu menyentuh file HTML lagi, fitur langsung terhubung otomatis.

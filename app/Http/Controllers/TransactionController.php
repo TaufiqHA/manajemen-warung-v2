@@ -9,12 +9,19 @@ use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $transactions = Transaction::where('warung_id', auth()->user()->warung_id)
-            ->with('items')
-            ->latest()
-            ->paginate(10);
+        $query = Transaction::where('warung_id', auth()->user()->warung_id)->with('items');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('transaction_code', 'like', "%{$search}%")
+                  ->orWhere('customer_name', 'like', "%{$search}%");
+            });
+        }
+
+        $transactions = $query->latest()->paginate(10)->appends(['search' => $request->search]);
         $products = \App\Models\Product::where('warung_id', auth()->user()->warung_id)->get();
         return view('pages.transaction', compact('transactions', 'products'));
     }

@@ -9,9 +9,17 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = \App\Models\Category::all(); // Silakan sesuaikan query-nya nanti
+        $query = \App\Models\Category::query();
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+        }
+
+        $categories = $query->get();
         return view('pages.category', compact('categories'));
     }
 

@@ -9,12 +9,12 @@
         </button>
 
         <!-- Search Bar (Sembunyikan di layar sangat kecil/HP, munculkan di tablet ke atas) -->
-        <div class="relative w-full max-w-sm hidden sm:block">
-            <input type="text" placeholder="Search..." class="w-full py-2.5 md:py-3 pl-6 pr-12 rounded-full border-none shadow-sm md:shadow-sm focus:ring-2 focus:ring-[#2D735B] outline-none bg-gray-100 md:bg-white text-gray-700 text-sm md:text-base">
-            <div class="absolute right-4 top-2.5 md:top-3 text-gray-400">
+        <form action="{{ url()->current() }}" method="GET" class="relative w-full max-w-sm hidden sm:block">
+            <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..." class="w-full py-2.5 md:py-3 pl-6 pr-12 rounded-full border-none shadow-sm md:shadow-sm focus:ring-2 focus:ring-[#2D735B] outline-none bg-gray-100 md:bg-white text-gray-700 text-sm md:text-base">
+            <button type="submit" class="absolute right-4 top-2.5 md:top-3 text-gray-400 hover:text-[#2D735B]">
                 <svg class="w-5 h-5 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            </div>
-        </div>
+            </button>
+        </form>
     </div>
 
     <!-- Actions Pill -->

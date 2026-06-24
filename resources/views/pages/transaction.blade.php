@@ -1,7 +1,7 @@
 @extends('layout.layout')
 
 @section('content')
-<div x-data="{ 
+<div x-data="{
     addModalOpen: false,
     products: {{ isset($products) ? json_encode($products) : '[]' }},
     items: [{ product_id: '', product_name: '', unit_price: 0, quantity: 1 }],
@@ -88,7 +88,7 @@
     <div x-show="addModalOpen" style="display: none" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
         <div @click.away="addModalOpen = false" class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden transform transition-all">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center">
-                <h2 class="text-xl font-bold text-gray-800">Tambah Transaksi Sederhana</h2>
+                <h2 class="text-xl font-bold text-gray-800">Tambah Transaksi</h2>
                 <button @click="addModalOpen = false" class="text-gray-400 hover:text-gray-600 transition-colors duration-300">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -105,20 +105,20 @@
                         <input type="text" name="note" class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D735B]" placeholder="Opsional">
                     </div>
                 </div>
-                
+
                 <hr>
                 <div class="flex justify-between items-center mb-2">
                     <p class="text-sm font-bold text-gray-700">Daftar Item Transaksi</p>
                     <button type="button" @click="addItem" class="text-xs bg-[#2D735B] text-white px-3 py-1 rounded-full hover:bg-[#245D49] transition-colors">+ Tambah Item</button>
                 </div>
-                
+
                 <div class="space-y-3 max-h-48 overflow-y-auto pr-2">
                     <template x-for="(item, index) in items" :key="index">
                         <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl relative">
                             <button type="button" @click="removeItem(index)" x-show="items.length > 1" class="absolute top-2 right-2 text-red-500 hover:text-red-700 transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
-                            
+
                             <div class="grid grid-cols-12 gap-2">
                                 <div class="col-span-8">
                                     <label class="block text-xs font-medium text-gray-600 mb-1">Produk</label>
@@ -142,7 +142,7 @@
                         </div>
                     </template>
                 </div>
-                
+
                 <div class="grid grid-cols-2 gap-4 pt-2">
                     <div>
                         <label class="block text-xs font-medium text-gray-600 mb-1">Diskon (Rp)</label>
@@ -164,7 +164,7 @@
                         <span class="text-lg font-bold text-[#2D735B]">Rp <span x-text="grandTotal.toLocaleString('id-ID')"></span></span>
                     </div>
                 </div>
-                
+
                 <hr>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -181,7 +181,7 @@
                         <input type="number" name="paid_amount" required class="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2D735B]">
                     </div>
                 </div>
-                
+
                 <div class="pt-4 flex justify-end gap-3 border-t border-gray-100 mt-4">
                     <x-button @click="addModalOpen = false" color="secondary" size="md" class="!rounded-xl">Batal</x-button>
                     <x-button type="submit" color="primary" size="md">Simpan Transaksi</x-button>

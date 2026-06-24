@@ -6,9 +6,16 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = \App\Models\Product::with('category')->get();
+        $query = \App\Models\Product::with('category');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $products = $query->get();
         $categories = \App\Models\Category::all();
         return view('pages.product', compact('products', 'categories'));
     }

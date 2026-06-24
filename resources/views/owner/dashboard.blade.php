@@ -13,13 +13,13 @@
             <h3 class="text-gray-500 font-medium text-sm">Total Pendapatan (Bulan ini)</h3>
             <p class="text-3xl font-bold text-[#2D735B] mt-2">Rp 0</p>
         </div>
-        
+
         <!-- Card 2 -->
         <div class="bg-white p-6 rounded-2xl shadow-sm">
             <h3 class="text-gray-500 font-medium text-sm">Total Transaksi</h3>
             <p class="text-3xl font-bold text-[#2D735B] mt-2">0</p>
         </div>
-        
+
         <!-- Card 3 -->
         <div class="bg-white p-6 rounded-2xl shadow-sm">
             <h3 class="text-gray-500 font-medium text-sm">Produk Terjual</h3>
